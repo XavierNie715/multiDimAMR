@@ -67,10 +67,16 @@ Foam::autoPtr<Foam::adaptCriteria> Foam::adaptCriteria::New
     const word adaptCriteriaTypeName(dict.lookup("type"));
     Info<< "Creating adaptCriteria " << adaptCriteriaTypeName << endl;
 
+#if OPENFOAM >= 2206
+    auto cstr = dictionaryConstructorTable(adaptCriteriaTypeName);
+
+    if (!cstr)
+#else
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(adaptCriteriaTypeName);
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
+#endif
     {
         FatalErrorIn
             (
@@ -86,7 +92,11 @@ Foam::autoPtr<Foam::adaptCriteria> Foam::adaptCriteria::New
                 << exit(FatalError);
     }
 
+#if OPENFOAM >= 2206
+    return autoPtr<adaptCriteria>(cstr(mesh, dict));
+#else
     return autoPtr<adaptCriteria>(cstrIter()(mesh, dict));
+#endif
 }
 
 

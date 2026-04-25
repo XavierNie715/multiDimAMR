@@ -61,10 +61,16 @@ Foam::autoPtr<Foam::hexRef> Foam::hexRef::New
         hexRefTypeName = "hexRef4";
     }
 
+#if OPENFOAM >= 2206
+    auto hexRefCtor = meshConstructorTable(hexRefTypeName);
+
+    if (!hexRefCtor)
+#else
     meshConstructorTable::iterator hexRefIter =
         meshConstructorTablePtr_->find(hexRefTypeName);
 
     if (hexRefIter == meshConstructorTablePtr_->end())
+#endif
     {
         FatalErrorInFunction
             << "Unsupported mesh number of dimensions for hex refinement" << nl
@@ -75,7 +81,11 @@ Foam::autoPtr<Foam::hexRef> Foam::hexRef::New
 
     return autoPtr<hexRef>
     (
+#if OPENFOAM >= 2206
+        hexRefCtor(mesh, readHistory)
+#else
         hexRefIter()(mesh, readHistory)
+#endif
     );
 }
 
@@ -112,10 +122,16 @@ Foam::autoPtr<Foam::hexRef> Foam::hexRef::New
         hexRefTypeName = "hexRef4";
     }
 
+#if OPENFOAM >= 2206
+    auto hexRefCtor = levelsHistConstructorTable(hexRefTypeName);
+
+    if (!hexRefCtor)
+#else
     levelsHistConstructorTable::iterator hexRefIter =
         levelsHistConstructorTablePtr_->find(hexRefTypeName);
 
     if (hexRefIter == levelsHistConstructorTablePtr_->end())
+#endif
     {
         FatalErrorInFunction
             << "Unsupported mesh number of dimensions for hex refinement" << nl
@@ -126,7 +142,11 @@ Foam::autoPtr<Foam::hexRef> Foam::hexRef::New
 
     return autoPtr<hexRef>
     (
+#if OPENFOAM >= 2206
+        hexRefCtor(mesh, cellLevel, pointLevel, history, level0Edge)
+#else
         hexRefIter()(mesh, cellLevel, pointLevel, history, level0Edge)
+#endif
     );
 }
 
@@ -162,10 +182,16 @@ Foam::autoPtr<Foam::hexRef> Foam::hexRef::New
         hexRefTypeName = "hexRef4";
     }
 
+#if OPENFOAM >= 2206
+    auto hexRefCtor = levelsConstructorTable(hexRefTypeName);
+
+    if (!hexRefCtor)
+#else
     levelsConstructorTable::iterator hexRefIter =
         levelsConstructorTablePtr_->find(hexRefTypeName);
 
     if (hexRefIter == levelsConstructorTablePtr_->end())
+#endif
     {
         FatalErrorInFunction
             << "Unsupported mesh number of dimensions for hex refinement" << nl
@@ -176,7 +202,11 @@ Foam::autoPtr<Foam::hexRef> Foam::hexRef::New
 
     return autoPtr<hexRef>
     (
+#if OPENFOAM >= 2206
+        hexRefCtor(mesh, cellLevel, pointLevel, level0Edge)
+#else
         hexRefIter()(mesh, cellLevel, pointLevel, level0Edge)
+#endif
     );
 }
 

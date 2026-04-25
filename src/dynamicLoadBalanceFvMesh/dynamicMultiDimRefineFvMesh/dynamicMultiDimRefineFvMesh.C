@@ -595,7 +595,7 @@ Foam::dynamicMultiDimRefineFvMesh::unrefine
             forAllConstIters(faceToSplitPoint, iter)
             {
                 const label oldFacei = iter.key();
-                const label oldPointi = iter.object();
+                const label oldPointi = iter();
 
                 if (reversePointMap[oldPointi] < 0)
                 {
@@ -1274,21 +1274,33 @@ bool Foam::dynamicMultiDimRefineFvMesh::update()
 }
 
 
+#if OPENFOAM >= 2206
+bool Foam::dynamicMultiDimRefineFvMesh::writeObject
+(
+    IOstreamOption streamOpt,
+    const bool writeOnProc
+) const
+#else
 bool Foam::dynamicMultiDimRefineFvMesh::writeObject
 (
     IOstream::streamFormat fmt,
     IOstream::versionNumber ver,
     IOstream::compressionType cmp,
-    const bool valid
+    const bool writeOnProc
 ) const
+#endif
 {
     // Force refinement data to go to the current time directory.
     const_cast<hexRef&>(meshCutter_()).setInstance(time().timeName());
 
     bool writeOk =
     (
-        dynamicFvMesh::writeObject(fmt, ver, cmp, valid)
-     && meshCutter_->write(valid)
+#if OPENFOAM >= 2206
+        dynamicFvMesh::writeObject(streamOpt, writeOnProc)
+#else
+        dynamicFvMesh::writeObject(fmt, ver, cmp, writeOnProc)
+#endif
+     && meshCutter_->write(writeOnProc)
     );
 
     if (dumpLevel_)

@@ -1,6 +1,10 @@
 if (finalIter)
 {
+#if OPENFOAM >= 2206
+    mesh.data().setFinalIteration(true);
+#else
     mesh.data::add("finalIteration", true);
+#endif
 }
 
 if (frozenFlow)
@@ -73,5 +77,9 @@ else
 
 if (finalIter)
 {
+#if OPENFOAM >= 2206
+    mesh.data().setFinalIteration(false);
+#else
     mesh.data::remove("finalIteration");
+#endif
 }

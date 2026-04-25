@@ -266,6 +266,13 @@ public:
     // Writing
 
         //- Write using given format, version and compression
+#if OPENFOAM >= 2206
+        virtual bool writeObject
+        (
+            IOstreamOption streamOpt,
+            const bool writeOnProc
+        ) const;
+#else
         virtual bool writeObject
         (
             IOstream::streamFormat fmt,
@@ -273,6 +280,7 @@ public:
             IOstream::compressionType cmp,
             const bool valid
         ) const;
+#endif
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

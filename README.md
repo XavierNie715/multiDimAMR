@@ -11,13 +11,13 @@ Rettenmaier, Daniel, et al. "Load balanced 2D and 3D adaptive mesh refinement in
 link:
 https://www.sciencedirect.com/science/article/pii/S2352711018301699
 
-port to the OpenFOAM+ version v1812 and v2006,v2012
+port to the OpenFOAM+ version v1812, v2006, v2012 and v2406
 
 refinement selection algoritm is based on foam extended 4.1
 
 ## Getting Started
 
-install OpenFOAM v1812 
+install OpenFOAM v1812, v2006, v2012 or v2406
 
 compile the library
 ```
@@ -28,9 +28,20 @@ in case of v2006, v2012:
 git checkout v2012
 ./Allwmake
 ```
+for OpenFOAM v2406, source the v2406 environment and build this branch directly:
+```
+source /usr/lib/openfoam/openfoam2406/etc/bashrc
+./Allwmake
+```
+
+This branch includes compatibility fixes for OpenFOAM v2406 API changes
+including runtime selection tables, `mesh.data().setFinalIteration(...)`,
+`writeObject(IOstreamOption, bool)`, `HashTable` iterators and
+`CompactListList` packing.
+
 ### Prerequisites
 
-Requires OpenFOAM v1812 or v2006,v2012:
+Requires OpenFOAM v1812, v2006, v2012 or v2406:
 
 ```
 https://www.openfoam.com/download/release-history.php
@@ -45,13 +56,32 @@ https://www.openfoam.com/download/release-history.php
 ```
 ### Usage
 
-add following lines to the contolDict:
+add following lines to the controlDict:
 ```
 libs
 (
    "libdynamicLoadBalanceFvMesh.so"
 );
-or depending on the openfoam version
+```
+
+Do not use the old library name `libpolyRef.so` with this version. If an
+existing case still contains it, replace it with `libdynamicLoadBalanceFvMesh.so`.
+
+In the case `constant/dynamicMeshDict`, select one of the dynamic mesh types:
+```
+dynamicFvMesh   dynamicMultiDimRefineFvMesh;
+```
+or, when load balancing is required:
+```
+dynamicFvMesh   dynamicMultiDimRefineBalancedFvMesh;
+
+enableBalancing     true;
+allowableImbalance  0.10;
+```
+
+For older OpenFOAM versions, depending on the library loading syntax, the
+unquoted library name may also be used:
+```
 libs
 (
    dynamicLoadBalanceFvMesh

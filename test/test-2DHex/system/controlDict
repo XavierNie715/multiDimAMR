@@ -63,7 +63,7 @@ maxDeltaT       1;
 
 libs
 (
-    "libpolyRef.so"
+    "libdynamicLoadBalanceFvMesh.so"
 );
 
 
